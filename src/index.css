@@ -1,7 +1,7 @@
 :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #17211a; background: #f3f4ef; font-synthesis: none; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; border: 0; border-radius: .45rem; padding: .65rem .9rem; background: #315d40; color: white; font-weight: 700; }
 .app-shell { width: min(1440px, 100%); margin: 0 auto; padding: clamp(1rem, 3vw, 3rem); }
 header { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; padding: 1.25rem 0 2rem; }
@@ -16,7 +16,10 @@ h4 { margin: 1rem 0 .75rem; font-size: .8rem; letter-spacing: .08em; text-transf
 .notice { border-left: .4rem solid #b2562c; background: #fff8f3; }
 .input-grid, .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: .75rem; }
 .field { display: grid; gap: .3rem; color: #415045; font-size: .82rem; font-weight: 700; }
-input, select { width: 100%; border: 1px solid #b9c2b9; border-radius: .4rem; padding: .55rem .6rem; color: #17211a; background: white; }
+input, select, textarea { width: 100%; border: 1px solid #b9c2b9; border-radius: .4rem; padding: .55rem .6rem; color: #17211a; background: white; }
+textarea { min-height: 5rem; resize: vertical; }
+.recommendation-textarea { color: #17211a; font-weight: 400; }
+.recommendation-textarea::placeholder { color: #9aa39b; font-weight: 400; opacity: 1; }
 .rule-field { display: grid; grid-template-columns: 1fr 110px; gap: .4rem; align-items: end; }
 .scenario-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding: 0; border: 0; background: transparent; box-shadow: none; }
 .scenario-grid > div > h2 { margin-left: .25rem; }

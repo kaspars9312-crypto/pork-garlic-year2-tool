@@ -443,7 +443,9 @@ function App() {
   const [a, setA] = useState(blankScenario("A"));
   const [b, setB] = useState(blankScenario("B"));
   const [rec, setRec] = useState("NEITHER");
-  const [assumption, setAssumption] = useState("");
+  const [recommendationText, setRecommendationText] = useState("");
+  const [mainReason, setMainReason] = useState("");
+  const [mostImportantAssumption, setMostImportantAssumption] = useState("");
   const [validation, setValidation] = useState<ReturnType<
     typeof createYear1WinterValidationCase
   > | null>(null);
@@ -608,6 +610,10 @@ function App() {
             setRules(initialRules);
             setA(blankScenario("A"));
             setB(blankScenario("B"));
+            setRec("NEITHER");
+            setRecommendationText("");
+            setMainReason("");
+            setMostImportantAssumption("");
             setValidation(null);
           }}
         >
@@ -950,6 +956,7 @@ function App() {
       </section>
       <section>
         <h2>8. Recommendation</h2>
+        <div className="recommendation">
         <label>
           <input
             type="radio"
@@ -974,11 +981,36 @@ function App() {
           />{" "}
           Neither / revise plan
         </label>
-        <input
-          value={assumption}
-          placeholder="Most important assumption"
-          onChange={(e) => setAssumption(e.target.value)}
-        />
+        </div>
+        <div className="editor-stack">
+          <label className="field">
+            <span>Our recommendation</span>
+            <textarea
+              className="recommendation-textarea"
+              value={recommendationText}
+              placeholder="We recommend Scenario A because it keeps sufficient cash while meeting our expected sales target."
+              onChange={(event) => setRecommendationText(event.target.value)}
+            />
+          </label>
+          <label className="field">
+            <span>Main reason</span>
+            <textarea
+              className="recommendation-textarea"
+              value={mainReason}
+              placeholder="Scenario A preserves more closing cash and requires less borrowing."
+              onChange={(event) => setMainReason(event.target.value)}
+            />
+          </label>
+          <label className="field">
+            <span>Most important assumption</span>
+            <textarea
+              className="recommendation-textarea"
+              value={mostImportantAssumption}
+              placeholder="We assume actual allocated sales will be at least 60,000 units."
+              onChange={(event) => setMostImportantAssumption(event.target.value)}
+            />
+          </label>
+        </div>
       </section>
       <section>
         <h2>9. Year 1 Validation</h2>
