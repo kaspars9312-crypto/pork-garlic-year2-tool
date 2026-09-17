@@ -160,6 +160,24 @@ function Results({ result }: { result: ScenarioResult }) {
           {result.indicators.unusedMachineCapacity.toLocaleString()}
         </p>
       </section>
+      <section>
+        <h4>CALCULATED — Tax-loss carryforward</h4>
+        <dl>
+          {[
+            ["Opening tax loss pool", result.tax.openingTaxLossPool],
+            ["Profit Before Tax", result.profitAndLoss.profitBeforeTax],
+            ["Loss pool used", result.tax.lossPoolUsed],
+            ["Taxable profit", result.tax.taxableProfit],
+            ["Game Tax", result.tax.gameTax],
+            ["Closing tax loss pool", result.tax.closingTaxLossPool],
+          ].map(([label, value]) => (
+            <div key={label as string}>
+              <dt>{label}</dt>
+              <dd>{money(value as number)}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </div>
   );
 }
@@ -562,6 +580,23 @@ function App() {
     s,
     r: calculateScenario({ company, rules, scenario: s }),
   }));
+  const resultA = calculateScenario({ company, rules, scenario: a });
+  const resultB = calculateScenario({ company, rules, scenario: b });
+  const financialDifferences = [
+    ["Revenue", resultA.profitAndLoss.revenue, resultB.profitAndLoss.revenue],
+    ["Net Profit", resultA.profitAndLoss.netProfit, resultB.profitAndLoss.netProfit],
+    ["Closing Cash", resultA.cashFlow.closingCash, resultB.cashFlow.closingCash],
+    ["Machine purchases", resultA.cashFlow.machinePurchases, resultB.cashFlow.machinePurchases],
+    ["Market investment", resultA.profitAndLoss.marketInvestment, resultB.profitAndLoss.marketInvestment],
+    ["Premise rent", resultA.profitAndLoss.premiseRent, resultB.profitAndLoss.premiseRent],
+    ["Transport", resultA.profitAndLoss.transport, resultB.profitAndLoss.transport],
+    ["Maintenance", resultA.profitAndLoss.maintenance, resultB.profitAndLoss.maintenance],
+    ["Loan interest", resultA.profitAndLoss.loanInterest, resultB.profitAndLoss.loanInterest],
+    ["Closing debt", resultA.closingDebt, resultB.closingDebt],
+    ["Unsold production", resultA.indicators.unsoldFinishedUnits, resultB.indicators.unsoldFinishedUnits],
+    ["Unused milk", resultA.indicators.unusedMilkEquivalentTons, resultB.indicators.unusedMilkEquivalentTons],
+    ["Unused machine capacity", resultA.indicators.unusedMachineCapacity, resultB.indicators.unusedMachineCapacity],
+  ].filter(([, left, right]) => left !== right) as [string, number, number][];
   return (
     <main className="app-shell">
       <header>
@@ -590,6 +625,20 @@ function App() {
           value={company.startingCashForYear2}
           onChange={(v) => setCompany({ ...company, startingCashForYear2: v })}
         />
+        <div className="input-grid">
+          <NumberField
+            label="Unused tax loss carryforward"
+            value={company.unusedTaxLossCarryforward}
+            onChange={(v) =>
+              setCompany({ ...company, unusedTaxLossCarryforward: v })
+            }
+          />
+          <NumberField
+            label="Year 1 annual profit"
+            value={company.year1AnnualProfit}
+            onChange={(v) => setCompany({ ...company, year1AnnualProfit: v })}
+          />
+        </div>
         <div className="editor-heading">
           <button onClick={addOwned}>Add owned machine</button>
           <button onClick={addExistingLoan}>Add outstanding loan</button>
@@ -844,6 +893,29 @@ function App() {
           )}
           .
         </p>
+        <h3>Key financial differences</h3>
+        {financialDifferences.length === 0 ? (
+          <p className="muted">The calculated comparison measures are currently equal.</p>
+        ) : (
+          <ul>
+            {financialDifferences.map(([label, valueA, valueB]) => {
+              const higherScenario = valueA > valueB ? "Scenario A" : "Scenario B";
+              const lowerScenario = valueA > valueB ? "Scenario B" : "Scenario A";
+              const difference = Math.abs(valueA - valueB);
+              const unitLabels = ["Unsold production", "Unused machine capacity"];
+              const isUnits = unitLabels.includes(label);
+              const suffix = isUnits ? " units" : label === "Unused milk" ? " tons" : "";
+              const amount = isUnits || label === "Unused milk"
+                ? `${difference.toLocaleString()}${suffix}`
+                : money(difference);
+              return (
+                <li key={label}>
+                  {higherScenario} has {amount} higher {label.toLowerCase()} than {lowerScenario}.
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
       <section>
         <h2>7. Stress Test</h2>
